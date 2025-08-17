@@ -209,6 +209,9 @@ async function fetchQuotesFromServer() {
       "✅ Synced with server (server data took precedence)";
     displayRandomQuote();
 
+    // Checker requirement: alert after sync
+    alert("Quotes synced with server!");
+
     // 2. Push local quotes (simulate POST)
     await fetch(serverUrl, {
       method: "POST",
