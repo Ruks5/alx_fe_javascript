@@ -2,6 +2,13 @@
 // Stage 1: DOM Handling
 // =====================
 let quotes = [];
+let pendingConflict = null; // store conflict info
+
+// Fake server state (simulated)
+let serverQuotes = [
+  { text: "Success is not final, failure is not fatal.", category: "Wisdom" },
+  { text: "Courage is one step ahead of fear.", category: "Motivation" }
+];
 
 // Load quotes from localStorage on page load
 window.onload = function() {
@@ -9,7 +16,6 @@ window.onload = function() {
   if (savedQuotes) {
     quotes = JSON.parse(savedQuotes);
   } else {
-    // default quotes
     quotes = [
       { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
       { text: "Don’t let yesterday take up too much of today.", category: "Wisdom" },
@@ -18,7 +24,6 @@ window.onload = function() {
     saveQuotes();
   }
 
-  // Restore last viewed quote (sessionStorage)
   const lastQuote = sessionStorage.getItem("lastQuote");
   if (lastQuote) {
     document.getElementById("quoteDisplay").innerHTML = lastQuote;
@@ -26,7 +31,6 @@ window.onload = function() {
 
   populateCategories();
 
-  // Restore last selected category filter
   const lastFilter = localStorage.getItem("lastFilter");
   if (lastFilter) {
     document.getElementById("categoryFilter").value = lastFilter;
@@ -41,7 +45,6 @@ function displayRandomQuote() {
   const displayText = `"${quote.text}" - <em>${quote.category}</em>`;
   document.getElementById("quoteDisplay").innerHTML = displayText;
 
-  // Save last viewed quote to sessionStorage
   sessionStorage.setItem("lastQuote", displayText);
 }
 
@@ -107,7 +110,6 @@ function populateCategories() {
     .map(cat => `<option value="${cat}">${cat}</option>`)
     .join("");
 
-  // Keep last filter if exists
   const lastFilter = localStorage.getItem("lastFilter");
   if (lastFilter) {
     categoryFilter.value = lastFilter;
@@ -134,53 +136,105 @@ function filterQuotes() {
 }
 
 // =====================
-// Stage 4: Syncing with Server
+// Stage 4: Syncing & Conflicts
 // =====================
-const serverUrl = "https://jsonplaceholder.typicode.com/posts";
 
 // Manual Sync Button Handler
 async function syncQuotes() {
   document.getElementById("syncStatus").innerText = "⏳ Syncing with server...";
 
   try {
-    // 1. Fetch server quotes (simulate)
-    const response = await fetch(serverUrl);
-    const serverData = await response.json();
+    // Simulate fetching from server
+    let newServerData = [...serverQuotes];
 
-    // Simulate server quotes
-    const serverQuotes = serverData.slice(0, 5).map(item => ({
-      text: item.title,
-      category: "Server"
-    }));
+    // Check for conflicts: same text but different category
+    for (let localQuote of quotes) {
+      let serverMatch = newServerData.find(q => q.text === localQuote.text);
+      if (serverMatch && serverMatch.category !== localQuote.category) {
+        // Conflict detected → ask user
+        pendingConflict = { local: localQuote, server: serverMatch };
+        document.getElementById("conflictMessage").innerText =
+          `Quote: "${localQuote.text}"\nLocal category: ${localQuote.category}, Server category: ${serverMatch.category}`;
+        document.getElementById("conflictModal").style.display = "flex";
+        return;
+      }
+    }
 
-    // Conflict resolution: server takes precedence
-    const mergedQuotes = [...quotes, ...serverQuotes];
+    // Merge (server wins by default)
+    const mergedQuotes = [...quotes, ...newServerData];
     quotes = mergedQuotes.filter(
       (q, index, self) =>
-        index === self.findIndex(t => t.text === q.text) // avoid duplicates
+        index === self.findIndex(t => t.text === q.text) // dedupe
     );
 
     saveQuotes();
     populateCategories();
 
     document.getElementById("syncStatus").innerText =
-      "✅ Synced with server (server data took precedence)";
+      "✅ Synced successfully (server data merged)";
 
-    // 2. Push local quotes (simulate POST)
-    await fetch(serverUrl, {
-      method: "POST",
-      body: JSON.stringify(quotes),
-      headers: {
-        "Content-Type": "application/json; charset=UTF-8",
-      },
-    });
-    console.log("Local quotes sent to server (simulation)");
+    // Simulate POSTing local quotes to server
+    serverQuotes = [...quotes];
+    console.log("Local quotes sent to server:", serverQuotes);
 
   } catch (error) {
     console.error("Error syncing with server:", error);
     document.getElementById("syncStatus").innerText = "❌ Failed to sync with server";
   }
 }
+
+// Conflict resolution handler
+function resolveConflict(choice) {
+  if (!pendingConflict) return;
+
+  if (choice === "server") {
+    // Keep server version
+    quotes = quotes.map(q =>
+      q.text === pendingConflict.local.text ? pendingConflict.server : q
+    );
+  } else {
+    // Keep local version (overwrite server)
+    serverQuotes = serverQuotes.map(q =>
+      q.text === pendingConflict.server.text ? pendingConflict.local : q
+    );
+  }
+
+  saveQuotes();
+  populateCategories();
+  document.getElementById("syncStatus").innerText =
+    `⚠️ Conflict resolved manually: ${choice.toUpperCase()} version kept`;
+
+  pendingConflict = null;
+  document.getElementById("conflictModal").style.display = "none";
+}
+// =====================
+// Stage 5: Testing Utility
+// =====================
+function createTestConflict() {
+  if (quotes.length === 0) {
+    alert("No quotes available to test with.");
+    return;
+  }
+
+  // Pick first quote and create a conflicting version on the server
+  const testQuote = quotes[0];
+  const serverVersion = { text: testQuote.text, category: "ServerConflict" };
+
+  // Insert/update serverQuotes with conflicting category
+  const index = serverQuotes.findIndex(q => q.text === testQuote.text);
+  if (index !== -1) {
+    serverQuotes[index] = serverVersion;
+  } else {
+    serverQuotes.push(serverVersion);
+  }
+
+  document.getElementById("syncStatus").innerText =
+    `⚠️ Test conflict created for quote: "${testQuote.text}"`;
+
+  // Immediately try to sync → should trigger modal
+  syncQuotes();
+}
+
 
 // Periodic Sync (every 1 minute)
 setInterval(syncQuotes, 60000);

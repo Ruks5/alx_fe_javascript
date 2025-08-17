@@ -4,6 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Quote Generator</title>
+  <style>
+    /* Simple modal styling */
+    #conflictModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center; align-items: center;
+    }
+    #conflictModal .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      text-align: center;
+    }
+    #conflictModal button {
+      margin: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
@@ -41,6 +63,19 @@
   <h2>Server Sync</h2>
   <button onclick="syncQuotes()">Sync Now</button>
   <div id="syncStatus"></div>
+  <!-- Testing Tools -->
+  <h2>Testing</h2>
+  <button onclick="createTestConflict()">Test Conflict</button>
+
+  <!-- Conflict Resolution Modal -->
+  <div id="conflictModal">
+    <div class="modal-content">
+      <h3>Conflict Detected</h3>
+      <p id="conflictMessage"></p>
+      <button onclick="resolveConflict('server')">Keep Server</button>
+      <button onclick="resolveConflict('local')">Keep Local</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
