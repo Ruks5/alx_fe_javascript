@@ -1,34 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Quote Generator</title>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Quote display + next button -->
-  <div id="quoteDisplay"></div>
-  <button id="newQuote">Show New Quote</button>
+  <!-- Quote Display -->
+  <div id="quoteDisplay">
+    <p>Click "Show Random Quote" to begin!</p>
+  </div>
+  <button onclick="showRandomQuote()">Show Random Quote</button>
 
-  <!-- Placeholder: form is injected by JS -->
-  <div id="formContainer" style="margin-top: 1rem;"></div>
+  <hr>
 
-  <hr/>
+  <!-- Add Quote Form -->
+  <h2>Add a New Quote</h2>
+  <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+  <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+  <button onclick="addQuote()">Add Quote</button>
 
-  <!-- Import / Export controls -->
-  <section id="ioControls" style="margin-top: 1rem;">
-    <h2>Import / Export Quotes</h2>
-    <button id="exportJson">Export Quotes (JSON)</button>
-    <input
-      type="file"
-      id="importFile"
-      accept=".json"
-      onchange="importFromJsonFile(event)"
-      style="margin-left: .5rem;"
-    />
-  </section>
+  <hr>
+
+  <!-- Category Filter -->
+  <h2>Filter by Category</h2>
+  <select id="categoryFilter" onchange="filterQuotes()">
+    <option value="all">All Categories</option>
+  </select>
+
+  <hr>
+
+  <!-- Import/Export JSON -->
+  <h2>Import / Export Quotes</h2>
+  <button onclick="exportToJsonFile()">Export Quotes to JSON</button>
+  <br><br>
+  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
 
   <script src="script.js"></script>
 </body>
