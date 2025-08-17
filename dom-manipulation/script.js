@@ -9,13 +9,14 @@ let quotes = [
 function showRandomQuote() {
   const quoteDisplay = document.getElementById("quoteDisplay");
   if (quotes.length === 0) {
-    quoteDisplay.textContent = "No quotes available. Add one!";
+    quoteDisplay.innerHTML = "No quotes available. <strong>Add one!</strong>";
     return;
   }
 
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomIndex];
-  quoteDisplay.textContent = `"${quote.text}" — (${quote.category})`;
+  // Use innerHTML to display the quote and category
+  quoteDisplay.innerHTML = `"${quote.text}" — <em>(${quote.category})</em>`;
 }
 
 // Function to add a new quote
