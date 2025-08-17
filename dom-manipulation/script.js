@@ -134,12 +134,13 @@ function filterQuotes() {
 }
 
 // =====================
+// =====================
 // Stage 4: Server Sync
 // =====================
 const serverUrl = "https://jsonplaceholder.typicode.com/posts";
 
 // Manual Sync Button Handler
-function syncWithServer() {
+function fetchQuotesFromServer() {
   document.getElementById("syncStatus").innerText = "⏳ Syncing with server...";
 
   // 1. Fetch server quotes (simulate)
@@ -180,4 +181,4 @@ function syncWithServer() {
 }
 
 // Periodic Sync (every 1 minute)
-setInterval(syncWithServer, 60000);
+setInterval(fetchQuotesFromServer, 60000);
