@@ -10,7 +10,7 @@
 
   <!-- Display Random Quote -->
   <div id="quoteDisplay"></div>
-  <button onclick="displayRandomQuote()">Show Random Quote</button>
+  <button id="newQuote">Show New Quote</button>
 
   <hr>
 
@@ -18,28 +18,28 @@
   <h2>Add a New Quote</h2>
   <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
   <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-  <button onclick="addQuote()">Add Quote</button>
+  <button id="addQuoteBtn">Add Quote</button>
 
   <hr>
 
   <!-- Import/Export JSON -->
   <h2>Import/Export Quotes</h2>
-  <button onclick="exportToJsonFile()">Export Quotes to JSON</button>
-  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  <button id="exportBtn">Export Quotes to JSON</button>
+  <input type="file" id="importFile" accept=".json" />
 
   <hr>
 
   <!-- Category Filter -->
   <h2>Filter by Category</h2>
-  <select id="categoryFilter" onchange="filterQuotes()">
+  <select id="categoryFilter">
     <option value="all">All Categories</option>
   </select>
 
   <hr>
 
-  <!-- Sync with Server -->
+  <!-- Server Sync -->
   <h2>Server Sync</h2>
-  <button onclick="syncQuotes()">Sync Now</button>
+  <button id="syncBtn">Sync Now</button>
   <div id="syncStatus"></div>
 
   <script src="script.js"></script>
