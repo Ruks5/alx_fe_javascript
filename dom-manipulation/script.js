@@ -134,50 +134,52 @@ function filterQuotes() {
 }
 
 // =====================
-// =====================
-// Stage 4: Server Sync
+// Stage 4: Server Sync (with async/await)
 // =====================
 const serverUrl = "https://jsonplaceholder.typicode.com/posts";
 
 // Manual Sync Button Handler
-function fetchQuotesFromServer() {
+async function fetchQuotesFromServer() {
   document.getElementById("syncStatus").innerText = "⏳ Syncing with server...";
 
-  // 1. Fetch server quotes (simulate)
-  fetch(serverUrl)
-    .then(response => response.json())
-    .then(serverData => {
-      // Simulate server quotes
-      const serverQuotes = serverData.slice(0, 5).map(item => ({
-        text: item.title,
-        category: "Server"
-      }));
+  try {
+    // 1. Fetch server quotes (simulate)
+    const response = await fetch(serverUrl);
+    const serverData = await response.json();
 
-      // Conflict resolution: server takes precedence
-      const mergedQuotes = [...quotes, ...serverQuotes];
-      quotes = mergedQuotes.filter(
-        (q, index, self) =>
-          index === self.findIndex(t => t.text === q.text) // avoid duplicates
-      );
+    // Simulate server quotes
+    const serverQuotes = serverData.slice(0, 5).map(item => ({
+      text: item.title,
+      category: "Server"
+    }));
 
-      saveQuotes();
-      populateCategories();
+    // Conflict resolution: server takes precedence
+    const mergedQuotes = [...quotes, ...serverQuotes];
+    quotes = mergedQuotes.filter(
+      (q, index, self) =>
+        index === self.findIndex(t => t.text === q.text) // avoid duplicates
+    );
 
-      document.getElementById("syncStatus").innerText = "✅ Synced with server (server data took precedence)";
-    })
-    .catch(error => {
-      console.error("Error syncing with server:", error);
-      document.getElementById("syncStatus").innerText = "❌ Failed to sync with server";
+    saveQuotes();
+    populateCategories();
+
+    document.getElementById("syncStatus").innerText =
+      "✅ Synced with server (server data took precedence)";
+
+    // 2. Push local quotes (simulate POST)
+    await fetch(serverUrl, {
+      method: "POST",
+      body: JSON.stringify(quotes),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
     });
+    console.log("Local quotes sent to server (simulation)");
 
-  // 2. Push local quotes (simulate POST)
-  fetch(serverUrl, {
-    method: "POST",
-    body: JSON.stringify(quotes),
-    headers: {
-      "Content-type": "application/json; charset=UTF-8",
-    },
-  }).then(() => console.log("Local quotes sent to server (simulation)"));
+  } catch (error) {
+    console.error("Error syncing with server:", error);
+    document.getElementById("syncStatus").innerText = "❌ Failed to sync with server";
+  }
 }
 
 // Periodic Sync (every 1 minute)
