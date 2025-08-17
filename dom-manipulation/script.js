@@ -171,7 +171,7 @@ async function fetchQuotesFromServer() {
       method: "POST",
       body: JSON.stringify(quotes),
       headers: {
-        "Content-type": "application/json; charset=UTF-8",
+      "Content-Type": "application/json; charset=UTF-8",
       },
     });
     console.log("Local quotes sent to server (simulation)");
