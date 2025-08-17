@@ -8,19 +8,24 @@
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Quote Display -->
-  <div id="quoteDisplay">
-    <p>Click "Show Random Quote" to begin!</p>
-  </div>
-  <button onclick="showRandomQuote()">Show Random Quote</button>
+  <!-- Display Random Quote -->
+  <div id="quoteDisplay"></div>
+  <button onclick="displayRandomQuote()">Show Random Quote</button>
 
   <hr>
 
-  <!-- Add Quote Form -->
+  <!-- Add New Quote -->
   <h2>Add a New Quote</h2>
   <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
   <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
   <button onclick="addQuote()">Add Quote</button>
+
+  <hr>
+
+  <!-- Import/Export JSON -->
+  <h2>Import/Export Quotes</h2>
+  <button onclick="exportToJsonFile()">Export Quotes to JSON</button>
+  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
 
   <hr>
 
@@ -32,11 +37,10 @@
 
   <hr>
 
-  <!-- Import/Export JSON -->
-  <h2>Import / Export Quotes</h2>
-  <button onclick="exportToJsonFile()">Export Quotes to JSON</button>
-  <br><br>
-  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  <!-- Sync with Server -->
+  <h2>Server Sync</h2>
+  <button onclick="syncWithServer()">Sync Now</button>
+  <div id="syncStatus"></div>
 
   <script src="script.js"></script>
 </body>
