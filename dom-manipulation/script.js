@@ -134,12 +134,12 @@ function filterQuotes() {
 }
 
 // =====================
-// Stage 4: Server Sync (with async/await)
+// Stage 4: Syncing with Server
 // =====================
 const serverUrl = "https://jsonplaceholder.typicode.com/posts";
 
 // Manual Sync Button Handler
-async function syncQuo() {
+async function syncQuotes() {
   document.getElementById("syncStatus").innerText = "⏳ Syncing with server...";
 
   try {
@@ -171,7 +171,7 @@ async function syncQuo() {
       method: "POST",
       body: JSON.stringify(quotes),
       headers: {
-      "Content-Type": "application/json; charset=UTF-8",
+        "Content-Type": "application/json; charset=UTF-8",
       },
     });
     console.log("Local quotes sent to server (simulation)");
@@ -183,4 +183,4 @@ async function syncQuo() {
 }
 
 // Periodic Sync (every 1 minute)
-setInterval(fetchQuotesFromServer, 60000);
+setInterval(syncQuotes, 60000);
